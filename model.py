@@ -1,6 +1,8 @@
+import itertools
 import os
 import pickle
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
@@ -42,8 +44,32 @@ model.compile(
     metrics=["accuracy"],
 )
 print("Model Constructed \n Fitting.....")
-model.fit(X_train, y_train, batch_size=64, epochs=30, verbose=2)
+epochs =30
+model.fit(X_train, y_train, batch_size=64, epochs=epochs, verbose=2)
 model.evaluate(X_test, y_test, batch_size=64, verbose=2)
+
+acc = model.history['accuracy']
+val_acc = model.history['val_accuracy']
+
+loss = model.history['loss']
+val_loss = model.history['val_loss']
+
+epochs_range = range(epochs)
+
+plt.figure(figsize=(8, 8))
+plt.subplot(1, 2, 1)
+plt.plot(epochs_range, acc, label='Training Accuracy')
+plt.plot(epochs_range, val_acc, label='Validation Accuracy')
+plt.legend(loc='lower right')
+plt.title('Training and Validation Accuracy')
+
+plt.subplot(1, 2, 2)
+plt.plot(epochs_range, loss, label='Training Loss')
+plt.plot(epochs_range, val_loss, label='Validation Loss')
+plt.legend(loc='upper right')
+plt.title('Training and Validation Loss')
+plt.show()
+
 
 model.save("Model/")
 tfjs.converters.save_keras_model(model, "tfjsmodel")
